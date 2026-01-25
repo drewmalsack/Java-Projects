@@ -18,4 +18,19 @@ public class Space {
     public List<Block> getBlocks(){
         return this.blocks;
     }
+
+    public String toString(){
+        if(blocks.size() == 0)
+            return "this space isnt assigned to any blocks, and thus doesnt exist";
+
+        String containerBlocks = "(" + blocks.get(0).getxCoord() + ", " + blocks.get(0).getyCoord() + ")";
+        if(blocks.size() > 1){
+            for(int i=1;i<blocks.size();i++){
+                String t = "(" + blocks.get(i).getxCoord() + ", " + blocks.get(i).getyCoord() + ")";
+                containerBlocks = containerBlocks + ", " + t;
+            }
+        }
+        return "This space is located at: ("+blocks.get(0).getxCoord() + ", " + blocks.get(0).getyCoord()
+        + ") and takes up block(s): " + containerBlocks;
+    }
 }

@@ -4,9 +4,14 @@ public class Block {
     
     //holds the space using this block, if there is one.
     private Space space;
+    
+    //the coordinates of the block
+    private int xCoord;
+    private int yCoord;
 
-    public Block(){
-
+    public Block(int x, int y){
+        this.xCoord = x;
+        this.yCoord = y;
     }
 
     public boolean isAvailable(){
@@ -22,6 +27,26 @@ public class Block {
 
     public Space getSpace(){
         return this.space;
+    }
+
+    public int getxCoord() {
+        return xCoord;
+    }
+
+    public void setxCoord(int xCoord) {
+        this.xCoord = xCoord;
+    }
+
+    public int getyCoord() {
+        return yCoord;
+    }
+
+    public void setyCoord(int yCoord) {
+        this.yCoord = yCoord;
+    }
+
+    public int[] getCoords(){
+        return new int[]{xCoord, yCoord};
     }
 
 }

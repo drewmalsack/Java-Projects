@@ -10,6 +10,12 @@ public class Lot{
 
     public Lot(int length, int width){
         blocks = new Block[length][width];
+
+        for(int i=0;i<length;i++){
+            for(int j=0;j<width;j++){
+                blocks[i][j] = new Block(i,j);
+            }
+        }
     }
 
     //method to create a space in the lot and assign blocks to it.
@@ -21,7 +27,8 @@ public class Lot{
         Space newSpace;
 
         //checks if the space would be created out of bounds of the lots length and width
-        if(x<0 || y<0 || x+length>blocks.length || y+width>blocks[0].length){
+        // or if the method is called to create a space that takes no blocks
+        if(x<0 || y<0 || x+length>blocks.length || y+width>blocks[0].length || length == 0 || width == 0){
             return null;
         }
 
