@@ -23,14 +23,16 @@ public class Space {
         if(blocks.size() == 0)
             return "this space isnt assigned to any blocks, and thus doesnt exist";
 
-        String containerBlocks = "(" + blocks.get(0).getxCoord() + ", " + blocks.get(0).getyCoord() + ")";
+        StringBuilder str = new StringBuilder();
+        //String containerBlocks = "(" + blocks.get(0).getxCoord() + ", " + blocks.get(0).getyCoord() + ")";
+        str.append("(" + blocks.get(0).getxCoord() + ", " + blocks.get(0).getyCoord() + ")");
+        
         if(blocks.size() > 1){
             for(int i=1;i<blocks.size();i++){
-                String t = "(" + blocks.get(i).getxCoord() + ", " + blocks.get(i).getyCoord() + ")";
-                containerBlocks = containerBlocks + ", " + t;
+                str.append(", "+ "(" + blocks.get(i).getxCoord() + ", " + blocks.get(i).getyCoord() + ")");
             }
         }
         return "This space is located at: ("+blocks.get(0).getxCoord() + ", " + blocks.get(0).getyCoord()
-        + ") and takes up block(s): " + containerBlocks;
+        + ") and takes up block(s): " + str.toString();
     }
 }

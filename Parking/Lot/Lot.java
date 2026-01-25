@@ -10,6 +10,7 @@ public class Lot{
 
     public Lot(int length, int width){
         blocks = new Block[length][width];
+        spaces = new ArrayList<>();
 
         for(int i=0;i<length;i++){
             for(int j=0;j<width;j++){
