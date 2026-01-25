@@ -51,12 +51,11 @@ public class Lot{
             tempBlock.setSpace(newSpace);
         }
 
+        spaces.add(newSpace);
+
         return newSpace;
     }
 
-    public void setBlocks(Block[][] blocks){
-        this.blocks = blocks;
-    }
 
     public Block[][] getBlocks(){
         return this.blocks;
