@@ -9,6 +9,13 @@ public class Block {
 
     }
 
+    public boolean isAvailable(){
+        if(space == null){
+            return true;
+        }
+        return false;
+    }
+
     public void setSpace(Space space){
         this.space = space;
     }
