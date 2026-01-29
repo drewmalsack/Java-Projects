@@ -69,4 +69,8 @@ public class Lot{
     public List<Space> getSpaces(){
         return this.spaces;
     }
+
+    public String toString(){
+        return "Blocks: "+ (blocks.length * blocks[0].length)+ ", Spaces: "+spaces.size();
+    }
 }
