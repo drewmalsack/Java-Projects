@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 public class Lot{
 
     private Block[][] blocks;
-    private List<Space> spaces;
+    private List<Space> spaces; //can update this list to a hashmap, making the removeSpace method use less time finding the space through its id.
 
     public Lot(int length, int width){
         blocks = new Block[length][width];
@@ -61,6 +61,7 @@ public class Lot{
     }
 
     public boolean removeSpace(String spaceId){
+
         /*boolean removed = false;
         for(int i=0;i<spaces.size();i++){
             if(spaces.get(i).getSpaceId().equals(spaceId)){
@@ -72,6 +73,28 @@ public class Lot{
         }
         return removed;*/
         Space tempSpace = spaces.stream().filter(s -> s.getSpaceId().equals(spaceId)).findFirst().orElse(null);
+        if(tempSpace == null)
+            return false;
+        tempSpace.releaseBlocks();
+        spaces.remove(tempSpace);
+        return true;
+    }
+
+    public boolean removeSpace(Block block){
+
+        Space tempSpace = block.getSpace();
+        
+        if(tempSpace == null)
+            return false;
+        tempSpace.releaseBlocks();
+        spaces.remove(tempSpace);
+        return true;
+    }
+
+    public boolean removeSpace(int x, int y){
+        Block tempBlock = blocks[x][y];
+        Space tempSpace = tempBlock.getSpace();
+        
         if(tempSpace == null)
             return false;
         tempSpace.releaseBlocks();
