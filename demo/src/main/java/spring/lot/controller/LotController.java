@@ -21,8 +21,8 @@ public class LotController{
     public LotService service;
 
     @RequestMapping("/status")
-    public String LotStatus(){
-        return service.getLotStatus();
+    public Lot getLot(){
+        return service.getLot();
     }
 
     @RequestMapping("/spaces")
@@ -54,7 +54,7 @@ public class LotController{
     } Bad method, use DTO instead of just use the x and y coords method */
 
     @RequestMapping("/removeSpaceByCoords")
-    public String removeSpaceById(@RequestParam int x, @RequestParam int y){
+    public String removeSpaceByCoords(@RequestParam int x, @RequestParam int y){
         boolean result = service.removeSpace(x, y);
         if(result)
             return "Space using coordinates: "+x+", "+y+" has been removed.";

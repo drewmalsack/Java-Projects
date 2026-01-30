@@ -13,8 +13,8 @@ public class LotService {
 
     public final Lot lot = new Lot(10, 10);
 
-    public String getLotStatus(){
-        return lot.toString();
+    public Lot getLot(){
+        return lot;
     }
 
     public List<Space> getSpaces(){
