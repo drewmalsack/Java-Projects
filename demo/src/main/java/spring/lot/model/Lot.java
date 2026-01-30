@@ -80,17 +80,6 @@ public class Lot{
         return true;
     }
 
-    public boolean removeSpace(Block block){
-
-        Space tempSpace = block.getSpace();
-        
-        if(tempSpace == null)
-            return false;
-        tempSpace.releaseBlocks();
-        spaces.remove(tempSpace);
-        return true;
-    }
-
     public boolean removeSpace(int x, int y){
         Block tempBlock = blocks[x][y];
         Space tempSpace = tempBlock.getSpace();
