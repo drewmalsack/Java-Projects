@@ -2,9 +2,12 @@ package spring.lot.model;
 
 import org.springframework.stereotype.Component;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 public class Block {
     
     //holds the space using this block, if there is one.
+    @JsonBackReference
     private Space space;
     
     //the coordinates of the block

@@ -4,9 +4,12 @@ import java.util.List;
 
 import org.springframework.stereotype.Component;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 public class Space {
 
     //List of blocks(physical space) that the space uses
+    @JsonManagedReference
     private List<Block> blocks;
     private String spaceId;
 
