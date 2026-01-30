@@ -3,6 +3,8 @@ package spring.lot.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -31,8 +33,14 @@ public class LotController{
     }
 
     @RequestMapping("/addSpace")
-    public String addSpace(@RequestParam int length, @RequestParam int width, @RequestParam int x, @RequestParam int y){
-        return service.addSpace(length, width, x, y);
+    public ResponseEntity<String> addSpace(@RequestParam int length, @RequestParam int width, @RequestParam int x, @RequestParam int y){
+        Space space = service.addSpace(length, width, x, y);
+        if(space != null)
+            return new ResponseEntity<>("Space created successfully.", HttpStatus.OK);
+        else
+            return new ResponseEntity<>("Space was not created.", HttpStatus.BAD_REQUEST);
+        
+        //return service.addSpace(length, width, x, y);
     }
 
     @RequestMapping("/removeSpaceById")

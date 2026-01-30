@@ -21,11 +21,11 @@ public class LotService {
         return lot.getSpaces();
     }
 
-    public String addSpace(int length, int width, int x, int y){
+    public Space addSpace(int length, int width, int x, int y){
         Space newSpace = lot.addSpace(length, width, x, y);
         if(newSpace != null)
-            return newSpace.toString();
-        return "Not all blocks are available to create that space.";
+            return newSpace;
+        return null;
     }
 
     public boolean removeSpace(String spaceId){
