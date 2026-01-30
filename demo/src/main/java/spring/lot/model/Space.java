@@ -1,6 +1,8 @@
-package Parking.Lot;
+package spring.lot.model;
 
 import java.util.List;
+
+import org.springframework.stereotype.Component;
 
 public class Space {
 
@@ -10,15 +12,13 @@ public class Space {
 
     public Space(List<Block> blocks) {
         this.blocks = blocks;
-        spaceId = "space-"+blocks.get(0).getxCoord()+blocks.get(blocks.size()-1).getyCoord();
+        spaceId = "space-"+blocks.get(0).getxCoord()+blocks.get(0).getyCoord()+blocks.get(blocks.size()-1).getxCoord()+blocks.get(blocks.size()-1).getyCoord();
     }
 
-    public void setBlocks(List<Block> blocks){
-        this.blocks = blocks;
-    }
-
-    public List<Block> getBlocks(){
-        return this.blocks;
+    public void releaseBlocks(){
+        for(int i=0;i<blocks.size();i++){
+            blocks.get(i).setSpace(null);
+        }
     }
 
     public String getSpaceId() {
@@ -27,6 +27,14 @@ public class Space {
 
     public void setSpaceId(String spaceId) {
         this.spaceId = spaceId;
+    }
+
+    public void setBlocks(List<Block> blocks){
+        this.blocks = blocks;
+    }
+
+    public List<Block> getBlocks(){
+        return this.blocks;
     }
 
     public String toString(){
