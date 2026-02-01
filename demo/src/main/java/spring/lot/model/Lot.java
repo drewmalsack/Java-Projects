@@ -91,6 +91,16 @@ public class Lot{
         return true;
     }
 
+    public void clearAllSpaces(){
+        List<String> ids = spaces.stream()
+            .map(Space::getSpaceId)
+            .toList();
+
+        for (String id : ids) {
+            removeSpace(id);
+        }
+    }
+
     public Block[][] getBlocks(){
         return this.blocks;
     }
