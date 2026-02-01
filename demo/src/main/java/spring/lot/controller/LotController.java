@@ -44,12 +44,12 @@ public class LotController{
     }
 
     @RequestMapping("/removeSpaceById")
-    public String removeSpaceById(@RequestParam String id){
+    public ResponseEntity<String> removeSpaceById(@RequestParam String id){
         boolean result = service.removeSpace(id);
         if(result)
-            return "Space: "+id+" has been removed.";
+            return new ResponseEntity<>("Space: "+id+" has been removed.", HttpStatus.OK);
         else
-            return "Space: "+id+" not found.";
+            return new ResponseEntity<>("Space: "+id+" not found.", HttpStatus.BAD_REQUEST);
     }
 
    /* @PostMapping("/removeSpaceByBlock")
@@ -62,11 +62,11 @@ public class LotController{
     } Bad method, use DTO instead of just use the x and y coords method */
 
     @RequestMapping("/removeSpaceByCoords")
-    public String removeSpaceByCoords(@RequestParam int x, @RequestParam int y){
+    public ResponseEntity<String> removeSpaceByCoords(@RequestParam int x, @RequestParam int y){
         boolean result = service.removeSpace(x, y);
         if(result)
-            return "Space using coordinates: "+x+", "+y+" has been removed.";
+            return new ResponseEntity<>("Space using coordinates: "+x+", "+y+" has been removed.", HttpStatus.OK);
         else
-            return "Space not found with those coordinates.";
+            return new ResponseEntity<>("Space not found with those coordinates.", HttpStatus.BAD_REQUEST);
     }
 }
