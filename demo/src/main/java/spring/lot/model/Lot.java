@@ -2,14 +2,34 @@ package spring.lot.model;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
-import org.springframework.stereotype.Component;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Transient;
 
+@Entity
 public class Lot{
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private long id;
+
+    @Transient //Block array will not be persisted
     private Block[][] blocks;
+
+    @OneToMany(cascade = CascadeType.ALL) //This ensures blocks are saved when the lot is saved
+    private List<Block> blockList;
+
+    @OneToMany
     private List<Space> spaces; //can update this list to a hashmap, making the removeSpace method use less time finding the space through its id.
+
+    public Lot(){
+
+    }
 
     public Lot(int length, int width){
         blocks = new Block[length][width];
@@ -105,12 +125,43 @@ public class Lot{
         return this.blocks;
     }
 
+    //this will most likely change or be replaced with a block[][] generation method
+    /*public void setBlocks(Block[][] blocks){
+        this.blocks = blocks;
+    }*/
+
+    @jakarta.persistence.PostLoad
+    private void fillGrid(){
+        if(this.blockList != null){
+            this.blocks = new Block[10][10]; //will need to be revisited if project is updated to create different sized lots
+            for(Block b : blockList){
+                blocks[b.getxCoord()][b.getyCoord()] = b;
+            }
+        }
+    }
+
     public void setSpaces(List<Space> spaces){
         this.spaces = spaces;
     }
 
     public List<Space> getSpaces(){
         return this.spaces;
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public List<Block> getBlockList() {
+        return blockList;
+    }
+
+    private void setBlockList(List<Block> blockList) {
+        this.blockList = blockList;
     }
 
     public String toString(){

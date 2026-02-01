@@ -2,16 +2,24 @@ package spring.lot.model;
 
 import java.util.List;
 
-import org.springframework.stereotype.Component;
-
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+
+@Entity
 public class Space {
 
     //List of blocks(physical space) that the space uses
     @JsonManagedReference
+    @OneToMany(mappedBy = "space") //defines the owner of the relationship and prevents a join table being created
     private List<Block> blocks;
+
+    @Id
     private String spaceId;
+
+    public Space(){}
 
     public Space(List<Block> blocks) {
         this.blocks = blocks;
