@@ -17,6 +17,7 @@ import spring.lot.model.Space;
 import spring.lot.service.LotService;
 
 @RestController
+@RequestMapping("/api")
 public class LotController{
 
     @Autowired

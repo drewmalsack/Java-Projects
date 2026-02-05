@@ -5,9 +5,11 @@ import java.util.List;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Transient;
 
@@ -21,10 +23,12 @@ public class Lot{
     @Transient //Block array will not be persisted
     private Block[][] blocks;
 
-    @OneToMany(cascade = CascadeType.ALL) //This ensures blocks are saved when the lot is saved
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER) //Cascade All ensures blocks are saved when the lot is saved, Fetch Eager fetches all block data when initializing the Lot. Decision made as all important lot methods use the block data so lazy loading doesnt make sense yet
+    @JoinColumn(name = "lot_id")
     private List<Block> blockList;
 
-    @OneToMany
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true) //makes sure to remove the space from the db when saving the lot after the space was removed from the list
+    @JoinColumn(name = "lot_id")
     private List<Space> spaces; //can update this list to a hashmap, making the removeSpace method use less time finding the space through its id.
 
     public Lot(){
@@ -33,11 +37,13 @@ public class Lot{
 
     public Lot(int length, int width){
         blocks = new Block[length][width];
+        blockList = new ArrayList<>();
         spaces = new ArrayList<>();
 
         for(int i=0;i<length;i++){
             for(int j=0;j<width;j++){
                 blocks[i][j] = new Block(i,j);
+                blockList.add(blocks[i][j]);
             }
         }
     }
