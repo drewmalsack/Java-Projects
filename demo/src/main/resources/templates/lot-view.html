@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Boeing Lot Visualizer</title>
+    <style>
+        .grid { display: table; border-spacing: 2px; }
+        .row { display: table-row; }
+        .block {
+            display: table-cell;
+            width: 40px; height: 40px;
+            border: 1px solid #ccc;
+            text-align: center;
+            vertical-align: middle;
+            font-size: 10px;
+            color: white;
+        }
+        .available { background-color: #2ecc71; } /* Green */
+        .occupied { background-color: #e74c3c; }  /* Red */
+    </style>
+</head>
+<body>
+    <h1>Parking Lot Map</h1>
+    <div class="grid">
+        <div class="row" th:each="row : ${lot.blocks}">
+            <div th:each="block : ${row}" 
+                 th:classappend="${block.space == null} ? 'available' : 'occupied'" 
+                 class="block">
+                <span th:text="${block.xCoord} + ',' + ${block.yCoord}">0,0</span>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
