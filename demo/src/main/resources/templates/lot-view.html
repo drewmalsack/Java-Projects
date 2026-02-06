@@ -3,6 +3,22 @@
 <head>
     <title>Boeing Lot Visualizer</title>
     <style>
+        /* Container to hold the grid and the sidebar */
+        .main-container {
+            display: flex;
+            align-items: flex-start; /* Keeps the sidebar at the top */
+            gap: 30px;               /* Space between grid and details */
+            margin-bottom: 30px;
+        }
+
+        /* Ensure the details div has a fixed width so it doesn't jump around */
+        #spaceDetails {
+            min-width: 250px;
+            border: 1px solid #333;
+            padding: 15px;
+            background: #fdfdfd;
+            box-shadow: 2px 2px 10px rgba(0,0,0,0.1);
+        }
         .grid { display: table; border-spacing: 2px; }
         .row { display: table-row; }
         .block {
@@ -23,13 +39,29 @@
     <div th:if="${errorMessage}" style="color: red;">
         <p th:text="${errorMessage}"></p>
     </div>
-    <div class="grid">
-        <div class="row" th:each="row : ${lot.blocks}">
-            <div th:each="block : ${row}" 
-                 th:classappend="${block.space == null} ? 'available' : 'occupied'" 
-                 class="block">
-                <span th:text="${block.xCoord} + ',' + ${block.yCoord}">0,0</span>
+    <div th:if="${result}">
+        <p th:text="${result}"></p>
+    </div>
+    <div class="main-container">
+        <div class="grid">
+            <div class="row" th:each="row : ${lot.blocks}">
+                <div th:each="block : ${row}" 
+                    th:classappend="${block.space == null} ? 'available' : 'occupied'" 
+                    class="block"
+                    th:data-space-id="${block.space != null ? block.space.spaceId : ''}"
+                    th:onclick="handleBlockClick(this)">
+                    <span th:text="${block.xCoord} + ',' + ${block.yCoord}">0,0</span>
+                </div>
             </div>
+        </div>
+        <div id="spaceDetails" style="display:none; border: 1px solid black; padding: 10px; margin-top: 20px; background: #f9f9f9;">
+            <h3>Space Details</h3>
+            <p>ID: <span id="displaySpaceId"></span></p>
+        
+            <form th:action="@{/delete-space}" method="post">
+                <input type="hidden" name="spaceId" id="hiddenSpaceIdInput" />
+                <button type="submit" style="background-color: #e74c3c; color: white;">Delete Space</button>
+            </form>
         </div>
     </div>
     <div id="form">
@@ -51,5 +83,25 @@
             <button type="submit">Create</button>
         </form>
     </div>
+    <script>
+        function handleBlockClick(element) {
+            // Grab the ID from the data attribute we just set
+            const spaceId = element.getAttribute('data-space-id');
+            if (spaceId) {
+                // Show the div
+                document.getElementById('spaceDetails').style.display = 'block';
+                // Update the text and the hidden input for the delete form
+                document.getElementById('displaySpaceId').innerText = spaceId;
+                document.getElementById('hiddenSpaceIdInput').value = spaceId;
+            }
+            else{
+               // Hide the div if showing
+                document.getElementById('spaceDetails').style.display = 'none';
+                // Remove the text and the hidden input for the delete form
+                document.getElementById('displaySpaceId').innerText = "";
+                document.getElementById('hiddenSpaceIdInput').value = ""; 
+            }
+        }   
+    </script>
 </body>
 </html>

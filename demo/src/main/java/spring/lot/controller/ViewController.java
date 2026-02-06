@@ -32,4 +32,15 @@ public class ViewController {
             redirectAttributes.addFlashAttribute("errorMessage", "Could not create space. Check for overlaps or boundaries.");
         return "redirect:/lot-view";
     }
+
+    @PostMapping("/delete-space")
+    public String deleteSpace(RedirectAttributes redirectAttributes, @RequestParam String spaceId){
+
+        boolean removed = lotService.removeSpace(spaceId);
+        if(removed)
+            redirectAttributes.addFlashAttribute("result", "Space removed successfully.");
+        else
+            redirectAttributes.addFlashAttribute("result", "Space failed to be removed.");
+        return "redirect:/lot-view";
+    }
 }
