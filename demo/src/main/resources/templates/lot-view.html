@@ -20,6 +20,9 @@
 </head>
 <body>
     <h1>Parking Lot Map</h1>
+    <div th:if="${errorMessage}" style="color: red;">
+        <p th:text="${errorMessage}"></p>
+    </div>
     <div class="grid">
         <div class="row" th:each="row : ${lot.blocks}">
             <div th:each="block : ${row}" 
@@ -28,6 +31,25 @@
                 <span th:text="${block.xCoord} + ',' + ${block.yCoord}">0,0</span>
             </div>
         </div>
+    </div>
+    <div id="form">
+        <h2>Add Parking Space Form</h2>
+        <p>Use the X and Y coordinates of the first block starting from the top left of the space.</p>
+        <form th:action="@{/lot-view}" method="post">
+            <label>X-Coordinate</label>
+            <input type="number" min="0" max="9" name="x_coord" />
+
+            <label>Y-Coordinate</label>
+            <input type="number" min="0" max="9" name="y_coord" />
+
+            <label>Length</label>
+            <input type="number" min="0" max="9" name="length" />
+
+            <label>Width</label>
+            <input type="number" min="0" max="9" name="width" />
+
+            <button type="submit">Create</button>
+        </form>
     </div>
 </body>
 </html>
