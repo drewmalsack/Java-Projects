@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import spring.lot.exception.ParkingException;
 import spring.lot.model.Space;
 import spring.lot.service.LotService;
 
@@ -27,20 +28,25 @@ public class ViewController {
     @PostMapping("/lot-view")
     public String processForm(RedirectAttributes redirectAttributes, @RequestParam int x_coord, @RequestParam int y_coord, @RequestParam int length, @RequestParam int width){
 
-        Space newSpace = lotService.addSpace(length, width, x_coord, y_coord);
-        if(newSpace == null)
-            redirectAttributes.addFlashAttribute("errorMessage", "Could not create space. Check for overlaps or boundaries.");
+        try{
+            lotService.addSpace(length, width, x_coord, y_coord);
+        } catch(ParkingException ex){
+            redirectAttributes.addFlashAttribute("errorMessage", ex.getMessage());
+        }
+            
         return "redirect:/lot-view";
     }
 
     @PostMapping("/delete-space")
     public String deleteSpace(RedirectAttributes redirectAttributes, @RequestParam String spaceId){
 
-        boolean removed = lotService.removeSpace(spaceId);
-        if(removed)
+        try{
+            lotService.removeSpace(spaceId);
             redirectAttributes.addFlashAttribute("result", "Space removed successfully.");
-        else
-            redirectAttributes.addFlashAttribute("result", "Space failed to be removed.");
+        } catch(ParkingException ex){
+            redirectAttributes.addFlashAttribute("result", ex.getMessage());
+        }
+    
         return "redirect:/lot-view";
     }
 }
