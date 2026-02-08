@@ -12,6 +12,9 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Transient;
+import spring.lot.exception.InvalidCoordinatesException;
+import spring.lot.exception.SpaceNotFoundException;
+import spring.lot.exception.SpaceOverlapException;
 
 @Entity
 public class Lot{
@@ -58,8 +61,12 @@ public class Lot{
 
         //checks if the space would be created out of bounds of the lots length and width
         // or if the method is called to create a space that takes no blocks
-        if(x<0 || y<0 || x+length>blocks.length || y+width>blocks[0].length || length == 0 || width == 0){
-            return null;
+        if(x<0 || y<0){
+            throw new InvalidCoordinatesException("Coordinates are out of bounds for the lot grid.");
+        } else if(x+length>blocks.length || y+width>blocks[0].length){
+            throw new InvalidCoordinatesException("Space extends out of bounds for the lot grid");
+        } else if(length == 0 || width == 0){
+            throw new InvalidCoordinatesException("Space would take up zero blocks.");
         }
 
         //for loop to check if all blocks in proposed space are available
@@ -67,7 +74,7 @@ public class Lot{
             for(int j=0;j<width;j++){
                 Block tempBlock = blocks[x+i][y+j];
                 if(!tempBlock.isAvailable())
-                    return null;
+                    throw new SpaceOverlapException("Space would use blocks already taken by another space.");
                 spaceBlocks.add(tempBlock);
             }
         }
@@ -100,18 +107,20 @@ public class Lot{
         return removed;*/
         Space tempSpace = spaces.stream().filter(s -> s.getSpaceId().equals(spaceId)).findFirst().orElse(null);
         if(tempSpace == null)
-            return false;
+            throw new SpaceNotFoundException("No space found with ID:" + spaceId);
         tempSpace.releaseBlocks();
         spaces.remove(tempSpace);
         return true;
     }
 
     public boolean removeSpace(int x, int y){
+        if(x<0 || x>=blocks.length || y<0 || y>blocks[0].length)
+            throw new InvalidCoordinatesException("Coordinates are out of bounds for lot grid.");
         Block tempBlock = blocks[x][y];
         Space tempSpace = tempBlock.getSpace();
         
         if(tempSpace == null)
-            return false;
+            throw new SpaceNotFoundException("No space found using block["+x+"]["+y+"]");
         tempSpace.releaseBlocks();
         spaces.remove(tempSpace);
         return true;
