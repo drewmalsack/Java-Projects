@@ -27,49 +27,42 @@ public class LotService {
     private BlockRepository blockRepository;
 
     public Lot getLot(){
-        return lotRepository.findAll().stream().findFirst().orElse(null);
+        return lotRepository.findAll().stream().findFirst().orElseGet(() -> {
+            Lot masterLot = new Lot(10, 10);
+            return lotRepository.save(masterLot);
+        });
     }
 
     public List<Space> getSpaces(){
         Lot lot = getLot();
-        if(lot == null)
-            return null;
+
         return lot.getSpaces();
     }
 
     public Space addSpace(int length, int width, int x, int y){
         Lot lot = getLot();
-        if(lot == null)
-            return null;
+
         Space newSpace = lot.addSpace(length, width, x, y);
-        if(newSpace != null){
-            lotRepository.save(lot);
-            return newSpace;
-        }
-        return null;
+
+        lotRepository.save(lot);
+        return newSpace;
     }
 
     public boolean removeSpace(String spaceId){
         Lot lot = getLot();
-        if(lot == null)
-            return false;
+
         boolean removed = getLot().removeSpace(spaceId);
-        if(removed){
-            lotRepository.save(lot);
-            return removed;
-        }
+
+        lotRepository.save(lot);
         return removed;
     }
 
     public boolean removeSpace(int x, int y){
         Lot lot = getLot();
-        if(lot == null)
-            return false;
+
         boolean removed = getLot().removeSpace(x, y);
-        if(removed){
-            lotRepository.save(lot);
-            return removed;
-        }
+
+        lotRepository.save(lot);
         return removed;
     }
 }
