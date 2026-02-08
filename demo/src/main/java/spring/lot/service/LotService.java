@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import spring.lot.model.Block;
 import spring.lot.model.Lot;
@@ -13,6 +14,7 @@ import spring.lot.repository.LotRepository;
 import spring.lot.repository.SpaceRepository;
 
 @Service
+@Transactional
 public class LotService {
 
     //public final Lot lot = new Lot(10, 10);
