@@ -32,6 +32,7 @@
         }
         .available { background-color: #2ecc71; } /* Green */
         .occupied { background-color: #e74c3c; }  /* Red */
+        .empty { background-color: #808080; }
     </style>
 </head>
 <body>
@@ -42,13 +43,48 @@
     <div th:if="${result}">
         <p th:text="${result}"></p>
     </div>
+    <div id="sidebar-content">
+        <h3 id="details-title">Space Details</h3>
+        <p id="details-text">Select a block to see details.</p>
+
+        <div id="park-form-container" style="display: none;">
+            <hr>
+            <h4>Park a Vehicle</h4>
+            <form th:action="@{/park}" method="post">
+                <input type="hidden" name="spaceId" id="input-spaceId">
+
+                <label>License Plate:</label>
+                <input type="text" name="plate" required class="form-control">
+
+                <label>Make:</label>
+                <input type="text" name="make" class="form-control">
+
+                <label>Model:</label>
+                <input type="text" name="model" class="form-control">
+
+                <label>Size:</label>
+                <select name="size" class="form-control">
+                    <option value="COMPACT">Compact</option>
+                    <option value="MID_SIZE">Mid-Size</option>
+                    <option value="SUV">SUV</option>
+                    <option value="TRUCK">Truck</option>
+                </select>
+
+                <button type="submit" class="btn btn-primary mt-2">Commit Parking</button>
+            </form>
+        </div>
+    </div>
     <div class="main-container">
         <div class="grid">
             <div class="row" th:each="row : ${lot.blocks}">
                 <div th:each="block : ${row}" 
-                    th:classappend="${block.space == null} ? 'available' : 'occupied'" 
+                    th:classappend="${block.space == null} ? 'empty' : (${block.space.vehicle == null} ? 'available' : 'occupied')" 
                     class="block"
                     th:data-space-id="${block.space != null ? block.space.spaceId : ''}"
+                    th:data-space-size="${block.space != null ? block.space.size : ''}"
+                    th:data-occupied="${block.space != null && block.space.vehicle != null}"
+                    th:data-plate="${block.space?.vehicle?.plate}" 
+                    th:data-vehicle-size="${block.space?.vehicle?.size}"
                     th:onclick="handleBlockClick(this)">
                     <span th:text="${block.xCoord} + ',' + ${block.yCoord}">0,0</span>
                 </div>
@@ -84,22 +120,28 @@
         </form>
     </div>
     <script>
-        function handleBlockClick(element) {
-            // Grab the ID from the data attribute we just set
-            const spaceId = element.getAttribute('data-space-id');
+        function handleBlockClick(block) {
+            const spaceId = block.getAttribute('data-space-id');
+            const plate = block.getAttribute('data-plate');
+            const vehicleSize = block.getAttribute('data-vehicle-size');
+            const spaceSize = block.getAttribute('data-space-size');
+            const occupied = block.getAttribute('data-occupied');
+            const formContainer = document.getElementById('park-form-container');
+            const spaceIdInput = document.getElementById('input-spaceId');
+            const detailsText = document.getElementById('details-text');
+            
             if (spaceId) {
-                // Show the div
-                document.getElementById('spaceDetails').style.display = 'block';
-                // Update the text and the hidden input for the delete form
-                document.getElementById('displaySpaceId').innerText = spaceId;
-                document.getElementById('hiddenSpaceIdInput').value = spaceId;
-            }
-            else{
-               // Hide the div if showing
-                document.getElementById('spaceDetails').style.display = 'none';
-                // Remove the text and the hidden input for the delete form
-                document.getElementById('displaySpaceId').innerText = "";
-                document.getElementById('hiddenSpaceIdInput').value = ""; 
+                spaceIdInput.value = spaceId; // Set the ID for the form
+                if (occupied == "true") {
+                    formContainer.style.display = 'none';
+                    detailsText.innerHTML = `Space: ${spaceId} <br> Occupied by: ${plate}`;
+                } else {
+                    formContainer.style.display = 'block';
+                    detailsText.innerHTML = `Space: ${spaceId} <br> Size: ${spaceSize}`;
+                }
+            } else {
+                formContainer.style.display = 'none';
+                detailsText.innerText = "This is empty pavement. Add a space first.";
             }
         }   
     </script>

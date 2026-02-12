@@ -23,14 +23,14 @@ public class Vehicle {
     private String plate;
 
     @Enumerated(EnumType.STRING)
-    private Enum<Car_Size> size;
+    private Car_Size size;
 
     @OneToOne(mappedBy = "vehicle")
     private Space space;
 
     public Vehicle(){}
     
-    public Vehicle(String make, String model, String plate, Enum<Car_Size> size){
+    public Vehicle(String make, String model, String plate, Car_Size size){
         this.make=make;
         this.model=model;
         this.plate=plate;
@@ -65,7 +65,7 @@ public class Vehicle {
         return size;
     }
 
-    public void setSize(Enum<Car_Size> size) {
+    public void setSize(Car_Size size) {
         this.size = size;
     }
 
