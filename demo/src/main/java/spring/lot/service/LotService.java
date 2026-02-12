@@ -6,12 +6,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import spring.lot.exception.SpaceNotFoundException;
 import spring.lot.model.Block;
 import spring.lot.model.Lot;
 import spring.lot.model.Space;
+import spring.lot.model.Vehicle;
 import spring.lot.repository.BlockRepository;
 import spring.lot.repository.LotRepository;
 import spring.lot.repository.SpaceRepository;
+import spring.lot.repository.VehicleRepository;
 
 @Service
 @Transactional
@@ -27,6 +30,9 @@ public class LotService {
 
     @Autowired
     private BlockRepository blockRepository;
+
+    @Autowired
+    private VehicleRepository vehicleRepository;
 
     public Lot getLot(){
         return lotRepository.findAll().stream().findFirst().orElseGet(() -> {
@@ -66,5 +72,11 @@ public class LotService {
 
         lotRepository.save(lot);
         return removed;
+    }
+
+    public void parkVehicle(String spaceId, String plate, String make, String model, Vehicle.Car_Size size){
+        Space space = spaceRepository.findById(spaceId).orElseThrow(() -> new SpaceNotFoundException("Space with id: "+spaceId+" does not exist."));
+        space.Park(new Vehicle(make, model, plate, size));
+        spaceRepository.save(space);
     }
 }
