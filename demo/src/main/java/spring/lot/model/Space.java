@@ -92,7 +92,7 @@ public class Space {
 
     private void computeSize(){
         List<List<Block>> tempBlocks = new ArrayList<>();
-        List<Block> tempArray;
+        List<Block> tempArray = null;
         int tempCoord = -1;
 
         for(Block b : blocks){
@@ -100,13 +100,17 @@ public class Space {
                 if(tempArray != null)
                     tempBlocks.add(tempArray);
                 tempArray = new ArrayList<>();
+                tempCoord = b.getxCoord();
             }
             tempArray.add(b);
         }
-        if(tempBlocks.size() == 2 && tempBlocks.get(0).size() >= 2)
-            this.size = Size.MEDIUM;
-        else if(tempBlocks.size() >= 3 && tempBlocks.get(0).size() >= 3)
+        tempBlocks.add(tempArray);
+        System.out.println(tempBlocks.size());
+        System.out.println(tempBlocks.get(0).size());
+        if(tempBlocks.size() >= 3 && tempBlocks.get(0).size() >= 3)
             this.size = Size.LARGE;
+        else if(tempBlocks.size() >= 2 && tempBlocks.get(0).size() >= 2)
+            this.size = Size.MEDIUM;
         else
             this.size = Size.SMALL;
     }
