@@ -13,6 +13,8 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
+import spring.lot.exception.IncompatibleSizeException;
+import spring.lot.exception.SpaceOccupiedException;
 
 @Entity
 public class Space {
@@ -42,6 +44,7 @@ public class Space {
 
     public Space(List<Block> blocks) {
         this.blocks = blocks;
+        this.computeSize();
         spaceId = "space-"+blocks.get(0).getxCoord()+blocks.get(0).getyCoord()+blocks.get(blocks.size()-1).getxCoord()+blocks.get(blocks.size()-1).getyCoord();
     }
 
@@ -108,10 +111,17 @@ public class Space {
             this.size = Size.SMALL;
     }
 
-    public boolean Park(Vehicle vehicle){
+    public void Park(Vehicle vehicle){
         if(this.isOccupied())
-            return false;
+            throw new SpaceOccupiedException("This space is already occupied.");
 
+        if(!this.canFit(vehicle))
+            throw new IncompatibleSizeException("The vehicle is too large for this space.");
+        this.vehicle = vehicle;
+        vehicle.setSpace(this);
+    }
+
+    public boolean canFit(Vehicle vehicle){
         if(this.size == Size.LARGE)
             return true;
         else if(this.size == Size.MEDIUM && vehicle.getSize() != Vehicle.Car_Size.TRUCK)
