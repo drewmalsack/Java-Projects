@@ -7,7 +7,9 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 
 @Entity
 public class Space {
@@ -19,6 +21,10 @@ public class Space {
 
     @Id
     private String spaceId;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "vehicle_plate")
+    private Vehicle vehicle;
 
     public Space(){}
 
@@ -48,6 +54,15 @@ public class Space {
     public List<Block> getBlocks(){
         return this.blocks;
     }
+
+    public Vehicle getVehicle() {
+        return vehicle;
+    }
+
+    public void setVehicle(Vehicle vehicle) {
+        this.vehicle = vehicle;
+    }
+
 
     public String toString(){
         if(blocks.size() == 0)
