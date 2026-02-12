@@ -1,11 +1,14 @@
 package spring.lot.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
@@ -14,6 +17,12 @@ import jakarta.persistence.OneToOne;
 @Entity
 public class Space {
 
+    public enum Size{
+        SMALL,
+        MEDIUM,
+        LARGE
+    }
+    
     //List of blocks(physical space) that the space uses
     @JsonManagedReference
     @OneToMany(mappedBy = "space") //defines the owner of the relationship and prevents a join table being created
@@ -25,6 +34,9 @@ public class Space {
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "vehicle_plate")
     private Vehicle vehicle;
+
+    @Enumerated(EnumType.STRING)
+    private Size size;
 
     public Space(){}
 
@@ -63,6 +75,52 @@ public class Space {
         this.vehicle = vehicle;
     }
 
+    public boolean isOccupied(){
+        return this.vehicle != null;
+    }
+
+    public Size getSize() {
+        return size;
+    }
+
+    public void setSize(Size size){
+        this.size = size;
+    }
+
+    private void computeSize(){
+        List<List<Block>> tempBlocks = new ArrayList<>();
+        List<Block> tempArray;
+        int tempCoord = -1;
+
+        for(Block b : blocks){
+            if(b.getxCoord() != tempCoord){
+                if(tempArray != null)
+                    tempBlocks.add(tempArray);
+                tempArray = new ArrayList<>();
+            }
+            tempArray.add(b);
+        }
+        if(tempBlocks.size() == 2 && tempBlocks.get(0).size() >= 2)
+            this.size = Size.MEDIUM;
+        else if(tempBlocks.size() >= 3 && tempBlocks.get(0).size() >= 3)
+            this.size = Size.LARGE;
+        else
+            this.size = Size.SMALL;
+    }
+
+    public boolean Park(Vehicle vehicle){
+        if(this.isOccupied())
+            return false;
+
+        if(this.size == Size.LARGE)
+            return true;
+        else if(this.size == Size.MEDIUM && vehicle.getSize() != Vehicle.Car_Size.TRUCK)
+            return true;
+        else if(this.size == Size.SMALL && vehicle.getSize() == Vehicle.Car_Size.COMPACT)
+            return true;
+        else
+            return false;
+    }
 
     public String toString(){
         if(blocks.size() == 0)
