@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import spring.lot.exception.SpaceNotFoundException;
+import spring.lot.exception.VehicleNotFoundException;
 import spring.lot.model.Block;
 import spring.lot.model.Lot;
 import spring.lot.model.Space;
@@ -39,6 +40,20 @@ public class LotService {
             Lot masterLot = new Lot(10, 10);
             return lotRepository.save(masterLot);
         });
+    }
+
+    public void vacateSpace(String spaceId){
+        Space space = spaceRepository.findById(spaceId).orElseThrow(() -> new SpaceNotFoundException("No space found with ID: "+spaceId));
+        space.Vacate();
+        spaceRepository.save(space);
+
+    }
+
+    public Space findSpaceByPlate(String plate){
+        Vehicle vehicle = vehicleRepository.findById(plate).orElseThrow(() -> new VehicleNotFoundException("No vehicle found with plate: "+plate));
+        if(vehicle.getSpace() == null)
+            throw new SpaceNotFoundException("Vehicle with plate: "+plate+" is not occupying a space.");
+        return vehicle.getSpace();
     }
 
     public List<Space> getSpaces(){

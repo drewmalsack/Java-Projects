@@ -53,6 +53,19 @@ public class ViewController {
         return "redirect:/lot-view";
     }
 
+    @PostMapping("/vacate")
+    public String vacateSpace(RedirectAttributes redirectAttributes, @RequestParam String spaceId){
+
+        try{
+            lotService.vacateSpace(spaceId);
+            redirectAttributes.addFlashAttribute("result", "Vehicle removed successfully.");
+        } catch(ParkingException ex){
+            redirectAttributes.addFlashAttribute("errorMessage", ex.getMessage());
+        }
+    
+        return "redirect:/lot-view";
+    }
+
     @RequestMapping("/park")
     public String parkVehicle(
         @RequestParam String make,
@@ -68,6 +81,18 @@ public class ViewController {
         }catch(ParkingException ex){
             redirectAttributes.addFlashAttribute("errorMessage", ex.getMessage());
         }
+        return "redirect:/lot-view";
+    }
+
+    @RequestMapping("/search")
+    public String searchVehicle(String plate, RedirectAttributes ra){
+        try{
+            String spaceId = lotService.findSpaceByPlate(plate).getSpaceId();
+            ra.addFlashAttribute("highlightId", spaceId);
+        } catch(ParkingException e){
+            ra.addFlashAttribute("errorMessage", e.getMessage());
+        }
+        
         return "redirect:/lot-view";
     }
 }

@@ -33,7 +33,7 @@ public class Space {
     @Id
     private String spaceId;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "vehicle_plate")
     private Vehicle vehicle;
 
@@ -123,6 +123,13 @@ public class Space {
             throw new IncompatibleSizeException("The vehicle is too large for this space.");
         this.vehicle = vehicle;
         vehicle.setSpace(this);
+    }
+
+    public void Vacate(){
+        if(vehicle != null){
+            vehicle.setSpace(null);
+            vehicle = null;
+        }
     }
 
     public boolean canFit(Vehicle vehicle){

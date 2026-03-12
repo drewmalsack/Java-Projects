@@ -6,6 +6,6 @@ import org.springframework.stereotype.Repository;
 import spring.lot.model.Vehicle;
 
 @Repository
-public interface VehicleRepository extends JpaRepository<Vehicle, Long>{
+public interface VehicleRepository extends JpaRepository<Vehicle, String>{
 
 }

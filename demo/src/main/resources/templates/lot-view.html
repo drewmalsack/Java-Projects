@@ -33,6 +33,18 @@
         .available { background-color: #2ecc71; } /* Green */
         .occupied { background-color: #e74c3c; }  /* Red */
         .empty { background-color: #808080; }
+
+        @keyframes pulse-gold {
+            0% { box-shadow: 0 0 0 0 rgba(255, 215, 0, 0.7); border: 3px solid gold; }
+            70% { box-shadow: 0 0 0 15px rgba(255, 215, 0, 0); border: 3px solid gold; }
+            100% { box-shadow: 0 0 0 0 rgba(255, 215, 0, 0); border: 3px solid gold; }
+        }
+
+        .highlight-search {
+            animation: pulse-gold 2s infinite;
+            z-index: 10;
+            position: relative;
+        }
     </style>
 </head>
 <body>
@@ -43,6 +55,10 @@
     <div th:if="${result}">
         <p th:text="${result}"></p>
     </div>
+    <form th:action="@{/search}" method="get" class="search-container">
+        <input type="text" name="plate" placeholder="Enter License Plate..." required>
+        <button type="submit">Search Radar</button>
+    </form>
     <div id="sidebar-content">
         <h3 id="details-title">Space Details</h3>
         <p id="details-text">Select a block to see details.</p>
@@ -134,7 +150,16 @@
                 spaceIdInput.value = spaceId; // Set the ID for the form
                 if (occupied == "true") {
                     formContainer.style.display = 'none';
-                    detailsText.innerHTML = `Space: ${spaceId} <br> Occupied by: ${plate}`;
+                    detailsText.innerHTML = `
+                        <div class="alert alert-info">
+                            <strong>Space ID:</strong> ${spaceId}<br>
+                            <strong>Vehicle:</strong> ${plate}
+                        </div>
+                        <form action="/vacate" method="post">
+                            <input type="hidden" name="spaceId" value="${spaceId}">
+                            <button type="submit" class="btn btn-warning btn-block">Vacate Space</button>
+                        </form>
+                    `;
                 } else {
                     formContainer.style.display = 'block';
                     detailsText.innerHTML = `Space: ${spaceId} <br> Size: ${spaceSize}`;
@@ -143,7 +168,26 @@
                 formContainer.style.display = 'none';
                 detailsText.innerText = "This is empty pavement. Add a space first.";
             }
-        }   
+        }
+        
+        /* Look for the highlightId passed from the controller */
+        const highlightId = "[[${highlightId}]]"; 
+
+        if (highlightId && highlightId !== "") {
+            // Find the block with this space ID
+            const target = document.querySelectorAll(`[data-space-id="${highlightId}"]`);
+            if (target && target.length > 0) {
+                target.forEach(element => {
+                    element.classList.add('highlight-search');
+                });
+                target[0].scrollIntoView({ behavior: 'smooth', block: 'center' });
+                
+                // Remove highlight after 10 seconds so it's not annoying
+                setTimeout(() => target.forEach(element => {
+                        element.classList.remove('highlight-search');
+                    }), 10000)
+            }
+        }
     </script>
 </body>
 </html>
