@@ -48,6 +48,9 @@
     </style>
 </head>
 <body>
+    <div sec:authorize="isAnonymous()">
+        <p>Please <a th:href="@{/login}">Login</a> to manage spaces.</p>
+    </div>
     <h1>Parking Lot Map</h1>
     <div th:if="${errorMessage}" style="color: red;">
         <p th:text="${errorMessage}"></p>
@@ -63,31 +66,34 @@
         <h3 id="details-title">Space Details</h3>
         <p id="details-text">Select a block to see details.</p>
 
+        <hr>
         <div id="park-form-container" style="display: none;">
-            <hr>
-            <h4>Park a Vehicle</h4>
-            <form th:action="@{/park}" method="post">
-                <input type="hidden" name="spaceId" id="input-spaceId">
+            
+            <input type="hidden" name="spaceId" id="input-spaceId">
+            <div sec:authorize="hasRole('ADMIN')">
+                <h4>Park a Vehicle</h4>
+                <form th:action="@{/park}" method="post">
 
-                <label>License Plate:</label>
-                <input type="text" name="plate" required class="form-control">
+                    <label>License Plate:</label>
+                    <input type="text" name="plate" required class="form-control">
 
-                <label>Make:</label>
-                <input type="text" name="make" class="form-control">
+                    <label>Make:</label>
+                    <input type="text" name="make" class="form-control">
 
-                <label>Model:</label>
-                <input type="text" name="model" class="form-control">
+                    <label>Model:</label>
+                    <input type="text" name="model" class="form-control">
 
-                <label>Size:</label>
-                <select name="size" class="form-control">
-                    <option value="COMPACT">Compact</option>
-                    <option value="MID_SIZE">Mid-Size</option>
-                    <option value="SUV">SUV</option>
-                    <option value="TRUCK">Truck</option>
-                </select>
+                    <label>Size:</label>
+                    <select name="size" class="form-control">
+                        <option value="COMPACT">Compact</option>
+                        <option value="MID_SIZE">Mid-Size</option>
+                        <option value="SUV">SUV</option>
+                        <option value="TRUCK">Truck</option>
+                    </select>
 
-                <button type="submit" class="btn btn-primary mt-2">Commit Parking</button>
-            </form>
+                    <button type="submit" class="btn btn-primary mt-2">Commit Parking</button>
+                </form>
+            </div>
         </div>
     </div>
     <div class="main-container">
@@ -116,50 +122,56 @@
             </form>
         </div>
     </div>
-    <div id="form">
-        <h2>Add Parking Space Form</h2>
-        <p>Use the X and Y coordinates of the first block starting from the top left of the space.</p>
-        <form th:action="@{/lot-view}" method="post">
-            <label>X-Coordinate</label>
-            <input type="number" min="0" max="9" name="x_coord" />
+    <div sec:authorize="hasRole('ADMIN')">
+        <div id="form">
+            <h2>Add Parking Space Form</h2>
+            <p>Use the X and Y coordinates of the first block starting from the top left of the space.</p>
+            <form th:action="@{/add-space}" method="post">
+                <label>X-Coordinate</label>
+                <input type="number" min="0" max="9" name="x_coord" />
 
-            <label>Y-Coordinate</label>
-            <input type="number" min="0" max="9" name="y_coord" />
+                <label>Y-Coordinate</label>
+                <input type="number" min="0" max="9" name="y_coord" />
 
-            <label>Length</label>
-            <input type="number" min="0" max="9" name="length" />
+                <label>Length</label>
+                <input type="number" min="0" max="9" name="length" />
 
-            <label>Width</label>
-            <input type="number" min="0" max="9" name="width" />
+                <label>Width</label>
+                <input type="number" min="0" max="9" name="width" />
 
-            <button type="submit">Create</button>
-        </form>
+                <button type="submit">Create</button>
+            </form>
+        </div>
     </div>
     <script>
+        const isAdmin = /*[[${#authorization.expression('hasRole("ADMIN")')}]]*/ false;
+        const csrfToken = /*[[${_csrf.token}]]*/ '';
         function handleBlockClick(block) {
             const spaceId = block.getAttribute('data-space-id');
             const plate = block.getAttribute('data-plate');
             const vehicleSize = block.getAttribute('data-vehicle-size');
             const spaceSize = block.getAttribute('data-space-size');
-            const occupied = block.getAttribute('data-occupied');
+            const occupied = block.getAttribute('data-occupied') === "true";
             const formContainer = document.getElementById('park-form-container');
             const spaceIdInput = document.getElementById('input-spaceId');
             const detailsText = document.getElementById('details-text');
             
             if (spaceId) {
                 spaceIdInput.value = spaceId; // Set the ID for the form
-                if (occupied == "true") {
+                if (occupied) {
+                    // Everyone sees details, but only Admin sees the Vacate button
                     formContainer.style.display = 'none';
-                    detailsText.innerHTML = `
-                        <div class="alert alert-info">
-                            <strong>Space ID:</strong> ${spaceId}<br>
-                            <strong>Vehicle:</strong> ${plate}
-                        </div>
-                        <form action="/vacate" method="post">
-                            <input type="hidden" name="spaceId" value="${spaceId}">
-                            <button type="submit" class="btn btn-warning btn-block">Vacate Space</button>
-                        </form>
-                    `;
+                    let content = `<strong>Space:</strong> ${spaceId} <br> <strong>Occupied by:</strong> ${plate}`;
+                    
+                    if (isAdmin) {
+                        content += `
+                            <form action="/vacate" method="post" style="margin-top:10px;">
+                                <input type="hidden" name="_csrf" value="${csrfToken}">
+                                <input type="hidden" name="spaceId" value="${spaceId}">
+                                <button type="submit" class="btn btn-warning">Vacate Space</button>
+                            </form>`;
+                    }
+                    detailsText.innerHTML = content;
                 } else {
                     formContainer.style.display = 'block';
                     detailsText.innerHTML = `Space: ${spaceId} <br> Size: ${spaceSize}`;

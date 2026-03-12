@@ -28,7 +28,7 @@ public class ViewController {
         return "lot-view";
     }
 
-    @PostMapping("/lot-view")
+    @PostMapping("/add-space")
     public String processForm(RedirectAttributes redirectAttributes, @RequestParam int x_coord, @RequestParam int y_coord, @RequestParam int length, @RequestParam int width){
 
         try{
