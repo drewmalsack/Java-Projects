@@ -24,7 +24,17 @@ public class ViewController {
     @GetMapping("/lot-view")
     public String viewLot(Model model){
 
+        long total = lotService.getSpaceCount();
+        long occupied = lotService.getOccupiedCount();
+
         model.addAttribute("lot", lotService.getLot());
+        model.addAttribute("spaces", total);
+        model.addAttribute("occupiedSpaces", occupied);
+
+        // Calculate percentage for a progress bar effect
+        double percent = (total > 0) ? ((double) occupied / total) * 100 : 100;
+        model.addAttribute("occupancyPercent", Math.round(percent));
+
         return "lot-view";
     }
 

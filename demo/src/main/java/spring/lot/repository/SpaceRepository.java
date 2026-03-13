@@ -8,4 +8,6 @@ import spring.lot.model.Space;
 @Repository
 public interface SpaceRepository extends JpaRepository<Space, String>{
 
+    public long countByVehicleIsNotNull();
+
 }

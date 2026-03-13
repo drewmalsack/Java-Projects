@@ -45,11 +45,32 @@
             z-index: 10;
             position: relative;
         }
+
+        .stats-bar {
+            display: flex;
+            gap: 20px;
+            background: #2c3e50;
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            align-items: center;
+        }
+        .stat-item { font-weight: bold; }
+        .stat-value { color: #f1c40f; } /* Gold color for highlights */
     </style>
 </head>
 <body>
     <div sec:authorize="isAnonymous()">
         <p>Please <a th:href="@{/login}">Login</a> to manage spaces.</p>
+    </div>
+    <div sec:authorize="isAuthenticated()">
+        <p><a th:href="@{/logout}">Logout</a></p>
+    </div>
+    <div class="stats-bar">
+        <div class="stat-item">Total Capacity: <span class="stat-value" th:text="${spaces}">0</span></div>
+        <div class="stat-item">Occupied: <span class="stat-value" th:text="${occupiedSpaces}">0</span></div>
+        <div class="stat-item">Availability: <span class="stat-value" th:text="${100 - occupancyPercent} + '%'">0%</span></div>
     </div>
     <h1>Parking Lot Map</h1>
     <div th:if="${errorMessage}" style="color: red;">
@@ -69,11 +90,10 @@
         <hr>
         <div id="park-form-container" style="display: none;">
             
-            <input type="hidden" name="spaceId" id="input-spaceId">
             <div sec:authorize="hasRole('ADMIN')">
                 <h4>Park a Vehicle</h4>
                 <form th:action="@{/park}" method="post">
-
+                    <input type="hidden" name="spaceId" id="input-spaceId">
                     <label>License Plate:</label>
                     <input type="text" name="plate" required class="form-control">
 

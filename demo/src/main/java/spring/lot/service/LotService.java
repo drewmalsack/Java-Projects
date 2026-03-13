@@ -56,6 +56,14 @@ public class LotService {
         return vehicle.getSpace();
     }
 
+    public long getSpaceCount(){
+        return spaceRepository.count();
+    }
+
+    public long getOccupiedCount(){
+        return spaceRepository.countByVehicleIsNotNull();
+    }
+
     public List<Space> getSpaces(){
         Lot lot = getLot();
 
