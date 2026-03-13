@@ -27,7 +27,7 @@ public class SecurityConfig {
             //.authorizeHttpRequests((req) -> req.requestMatchers(HttpMethod.POST, "/").hasRole("ADMIN"));
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/lot-view", "/search", "/css/**", "/js/**").permitAll() // Everyone can see
-                .requestMatchers("/park", "/vacate", "/add-space", "/delete-space").hasRole("ADMIN") // Only Admins can edit
+                .requestMatchers("/park", "/vacate", "/add-space", "/delete-space", "/h2-console").hasRole("ADMIN") // Only Admins can edit
                 .anyRequest().authenticated()
             )
             .formLogin(login -> login
