@@ -9,6 +9,7 @@ import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
@@ -27,7 +28,7 @@ public class Space {
     
     //List of blocks(physical space) that the space uses
     @JsonManagedReference
-    @OneToMany(mappedBy = "space") //defines the owner of the relationship and prevents a join table being created
+    @OneToMany(mappedBy = "space", fetch = FetchType.EAGER) //defines the owner of the relationship and prevents a join table being created, fetch type used to make tests happy. in bigger lots if this causes performance issues tests will have to be transactional
     private List<Block> blocks;
 
     @Id

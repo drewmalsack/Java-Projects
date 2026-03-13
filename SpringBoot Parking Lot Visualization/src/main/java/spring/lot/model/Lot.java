@@ -30,7 +30,7 @@ public class Lot{
     @JoinColumn(name = "lot_id")
     private List<Block> blockList;
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true) //makes sure to remove the space from the db when saving the lot after the space was removed from the list
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER) //makes sure to remove the space from the db when saving the lot after the space was removed from the list. FetchType.EAGER set to make test cases happy. With bigger lot sizes it could affect performance.
     @JoinColumn(name = "lot_id")
     private List<Space> spaces; //can update this list to a hashmap, making the removeSpace method use less time finding the space through its id.
 
