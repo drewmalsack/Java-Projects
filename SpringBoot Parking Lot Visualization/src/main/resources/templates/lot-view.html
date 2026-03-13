@@ -177,7 +177,7 @@
             const detailsText = document.getElementById('details-text');
             
             if (spaceId) {
-                spaceIdInput.value = spaceId; // Set the ID for the form
+                if(isAdmin) spaceIdInput.value = spaceId; // Set the ID for the form
                 if (occupied) {
                     // Everyone sees details, but only Admin sees the Vacate button
                     formContainer.style.display = 'none';
