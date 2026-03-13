@@ -164,8 +164,8 @@
         </div>
     </div>
     <script th:inline="javascript">
-        const isAdmin = /*[[${#authorization.expression('hasRole("ADMIN")')}]]*/ false;
-        const csrfToken = /*[[${_csrf.token}]]*/ '';
+        const isAdmin = [[${#authorization.expression('hasRole("ADMIN")')}]];
+        const csrfToken = [[${_csrf.token}]];
         function handleBlockClick(block) {
             const spaceId = block.getAttribute('data-space-id');
             const plate = block.getAttribute('data-plate');
@@ -182,7 +182,6 @@
                     // Everyone sees details, but only Admin sees the Vacate button
                     formContainer.style.display = 'none';
                     let content = `<strong>Space:</strong> ${spaceId} <br> <strong>Occupied by:</strong> ${plate}`;
-                    console.log(isAdmin);
                     if (isAdmin) {
                         content += `
                             <form action="/vacate" method="post" style="margin-top:10px;">
@@ -203,7 +202,7 @@
         }
         
         /* Look for the highlightId passed from the controller */
-        const highlightId = "[[${highlightId}]]"; 
+        const highlightId = [[${highlightId}]]; 
 
         if (highlightId && highlightId !== "") {
             // Find the block with this space ID
